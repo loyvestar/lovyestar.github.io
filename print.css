@@ -1,5 +1,6 @@
 /* =========================================================
-   print.css — A4 인쇄 전용 스타일 (media="print")
+   print.css — A4 인쇄 전용 스타일
+   index.html에서 media="print"로 연결됩니다.
    ========================================================= */
 
 @page {
@@ -14,17 +15,19 @@ html, body {
   font-size: 10.5pt;
 }
 
-/* 화면 UI 숨기기 */
+/* 화면 전용 UI 전부 숨김 */
 .screen-only { display: none !important; }
 
-/* 인쇄 컨테이너 노출 */
+/* 인쇄 컨테이너만 노출 */
 .print-root {
   display: block !important;
   position: static !important;
   visibility: visible !important;
-  width: auto;
-  height: auto;
-  overflow: visible;
+  left: auto !important;
+  top: auto !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 /* 문서 · 페이지 */
@@ -33,18 +36,20 @@ html, body {
 .r-page {
   box-shadow: none !important;
   border: 0 !important;
+  border-radius: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   width: auto !important;
-  min-height: 0 !important;
+  min-height: 262mm;
+  display: flex;
+  flex-direction: column;
   break-after: page;
   page-break-after: always;
   break-inside: avoid;
   page-break-inside: avoid;
-  display: flex;
-  flex-direction: column;
-  min-height: 262mm;
 }
+
+/* 마지막 문서의 마지막 쪽 뒤에는 빈 페이지를 만들지 않음 */
 .r-doc:last-child .r-page:last-child {
   break-after: auto;
   page-break-after: auto;
@@ -52,24 +57,32 @@ html, body {
 
 .r-body { flex: 1 1 auto; }
 
-/* 구조 보호 */
-.r-h2, .r-h3, h4 {
+/* 제목이 페이지 끝에 홀로 남지 않도록 */
+.r-h2, .r-h3, .r-box h4, .r-summary h3, .r-advice h4 {
   break-after: avoid;
   page-break-after: avoid;
 }
-.r-table, .r-advice, .r-box, .r-callout, .r-tipbox,
-.r-radarbox, .r-idcard, .r-summary, .r-memo, .r-sign, .r-check {
+
+/* 잘리면 안 되는 블록 */
+.r-table, .r-advice, .r-box, .r-callout, .r-tipbox, .r-radarbox,
+.r-idcard, .r-summary, .r-memo, .r-sign, .r-check,
+.r-scorebox, .r-relchips, .r-head, .r-foot {
   break-inside: avoid;
   page-break-inside: avoid;
 }
 tr, li { break-inside: avoid; page-break-inside: avoid; }
 thead { display: table-header-group; }
 
-/* 색상 강제 출력 */
-.r-tag, .r-gauge i, .r-num, .r-callout, .r-tipbox, .r-scorebox b, .r-logo, .r-count {
+/* 배경·색상 강제 출력 */
+.r-tag, .r-gauge, .r-gauge i, .r-num, .r-callout, .r-tipbox,
+.r-scorebox, .r-scorebox b, .r-logo, .r-count, .r-verify,
+.r-relchips span, .r-do, .r-table th, .r-box, .r-summary, .r-radarbox {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
-/* 링크 URL 노출 방지 */
+/* SVG 레이더가 축소되지 않도록 */
+.r-radar { width: 100% !important; height: auto !important; }
+
+/* 링크 뒤에 URL이 붙지 않도록 */
 a[href]::after { content: "" !important; }
