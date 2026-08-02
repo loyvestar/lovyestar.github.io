@@ -1,4 +1,5 @@
-//todo는 없다
+//투두는업다밤을샜으니
+
 (function () {
   'use strict';
 
@@ -20,6 +21,36 @@
   const LS_CFG  = 'hcs.cfg.v3';
 
   let batch = [];
+
+var PICKED_SCHOOL = null;
+
+function saveSchool(s) {
+  PICKED_SCHOOL = s ? {
+    name:     s.schoolName || '',
+    type:     s.schoolType || 'general',
+    code:     s.schoolCode || '',
+    office:   s.officeName || '',
+    region:   s.region || '',
+    district: s.district || '',
+    hsType:   s.hsType || s.kind || '',
+    found:    s.found || '',
+    address:  s.address || '',
+    at:       Date.now()
+  } : null;
+
+  try {
+    if (PICKED_SCHOOL) localStorage.setItem('pickedSchool', JSON.stringify(PICKED_SCHOOL));
+    else localStorage.removeItem('pickedSchool');
+  } catch (e) {}
+}
+
+function loadSchool() {
+  try {
+    var raw = localStorage.getItem('pickedSchool');
+    if (raw) PICKED_SCHOOL = JSON.parse(raw);
+  } catch (e) {}
+}
+loadSchool();
 
   /* =======================================================
      0. 누락 요소 자동 생성
@@ -207,6 +238,8 @@
   function collect() {
     const offered = currentOffered();
     return {
+      schoolName: PICKED_SCHOOL ? PICKED_SCHOOL.name : (fSchoolName.value.trim() || ''),
+      schoolInfo: PICKED_SCHOOL,
       name:       val('fName', '').trim(),
       no:         val('fNo', '').trim(),
       grade:      String(val('fGrade', '1')),
@@ -305,8 +338,21 @@
 
     const cfg = { key: val('fKey', '').trim(), proxy: val('fProxy', '').trim().replace(/\/+$/, '') };
     const btn = $('btnLookup');
+    fSchoolName.addEventListener('blur', function () {
+    var v = fSchoolName.value.trim();
+    if (!v) return;
+    if (!PICKED_SCHOOL || PICKED_SCHOOL.name !== v) {
+      saveSchool({ schoolName: v });
+      renderSoon();
+       }
+     });
     if (btn) btn.disabled = true;
     say('lookupState', '조회 중입니다…', 'busy');
+    var result = await Neis.fetchOffered(name, cfg);
+    saveSchool(result.school);          // ← 추가
+    fOffered.value = result.subjects.join(', ');
+    if (fSchoolType) fSchoolType.value = result.schoolType;
+    renderSoon();                            // ← 미리보기 갱신
 
     try {
       const res = await window.Neis.fetchOffered(name, cfg);
