@@ -327,7 +327,7 @@ loadSchool();
         key:   val('fKey', '').trim(),
         proxy: val('fProxy', '').trim().replace(/\/+$/, '')
       }));
-      say('cfgState', '설정을 저장했습니다. 이 브라우저에만 보관됩니다.', 'ok');
+      say('cfgState', '나이스 API키가 정상적으로 적용되었습니다.', 'ok');
     } catch (e) {
       say('cfgState', '브라우저 저장소를 사용할 수 없습니다.', 'err');
     }
