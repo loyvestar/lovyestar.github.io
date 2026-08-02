@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과목나침반 · 개인별 과목 선택 진단 리포트</title>
+<meta name="description" content="학생 개개인의 교육과정 여건을 진단하고, 진로에 맞는 과목 선택 조언을 담은 리포트를 생성합니다.">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="print.css" media="print">
+</head>
+<body>
+
+<a class="skip" href="#builder">본문으로 건너뛰기</a>
+
+<!-- ===== 화면 전용 UI ===== -->
+<div class="screen-only">
+
+  <header class="site-header" id="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">과목나침반</span>
+      </a>
+      <nav class="gnb" id="gnb" aria-label="주요 메뉴">
+        <a href="#builder">리포트 만들기</a>
+        <a href="#preview">미리보기</a>
+        <a href="#batch">여러 명 한번에</a>
+        <a href="#guide">활용 안내</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <p class="kicker">고교학점제 네비게이터</p>
+      <h1>학생 한 명 한 명에게<br><em>손에 쥐여줄 진단서</em>를 만듭니다.</h1>
+      <p class="hero-lead">
+        학생 개개인의 교육과정 여건을 진단하고, 학업 요건을 분석해<br>
+        진로에 맞는 과목 선택 조언을 담은 리포트를 만들어드립니다.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#builder">리포트 만들기</a>
+        <a class="btn btn-ghost" href="#batch">여러 명 한번에 출력</a>
+      </div>  
+    </div>
+  </section>
+
+  <!-- ===== 입력 ===== -->
+  <section class="section" id="builder">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">STEP 1 · 정보 입력</p>
+        <h2>학생 정보와 학교 여건을 입력하세요</h2>
+        <p class="lead">입력값은 브라우저 안에서만 처리되며 어디에도 전송되지 않습니다. 이름 칸을 비워 두면 빈 서식으로 출력됩니다.</p>
+      </div>
+
+      <div class="form-grid">
+
+        <div class="card panel">
+          <h3 class="panel-title">학생 정보</h3>
+          <div class="field">
+            <label for="fName">이름 <span class="opt">선택</span></label>
+            <input type="text" id="fName" placeholder="예: 김○○" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fNo">학번 <span class="opt">선택</span></label>
+            <input type="text" id="fNo" placeholder="예: 20301" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fGrade">학년</label>
+            <select id="fGrade">
+              <option value="1">1학년 · 공통과목 이수 중</option>
+              <option value="2" selected>2학년 · 일반선택 이수 중</option>
+              <option value="3">3학년 · 진로·융합선택 중심</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fTrack">희망 진로 계열</label>
+            <select id="fTrack"></select>
+          </div>
+          <div class="field">
+            <label for="fLevel">계열 별 주요 과목 이수 수준</label>
+            <select id="fLevel">
+              <option value="low">기초를 더 다지고 싶음</option>
+              <option value="mid" selected>공통과목까지 무난히 이수</option>
+              <option value="high">심화 과목까지 도전 가능</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fGoal">구체적 관심 분야 <span class="opt">선택</span></label>
+            <input type="text" id="fGoal" placeholder="예: 자율주행, 신소재, 아동심리" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="card panel">
+          <h3 class="panel-title">학교 교육과정 여건</h3>
+          <div class="field">
+            <label for="fRegion">지역 규모</label>
+            <select id="fRegion">
+              <option value="big">대도시 · 기준 70.23과목</option>
+              <option value="mid">중소도시 · 기준 67.19과목</option>
+              <option value="rural">읍면지역 · 기준 60.25과목</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fSubjects">개설 선택과목 수 <output id="oSubjects">62개</output></label>
+            <input type="range" id="fSubjects" min="10" max="100" value="62">
+          </div>
+          <div class="field">
+            <label for="fDup">동일 과목 중복 편성 수 <output id="oDup">18개</output></label>
+            <input type="range" id="fDup" min="0" max="35" value="18">
+          </div>
+          <div class="field">
+            <label for="fWant">희망 과목 중 교내 개설 비율 <output id="oWant">55%</output></label>
+            <input type="range" id="fWant" min="0" max="100" value="55">
+          </div>
+          <div class="field">
+            <label for="fCoop">수강 가능 공동교육과정 강좌 <output id="oCoop">6개</output></label>
+            <input type="range" id="fCoop" min="0" max="40" value="6">
+          </div>
+          <div class="field">
+            <label for="fNet">온라인 쌍방향 수업 인프라 <output id="oNet">보통</output></label>
+            <input type="range" id="fNet" min="0" max="100" value="50">
+          </div>
+        </div>
+
+        <div class="card panel">
+          <h3 class="panel-title">상담 메모</h3>
+          <div class="field">
+            <label for="fMemo">담당 교사 코멘트 <span class="opt">선택</span></label>
+            <textarea id="fMemo" rows="5" placeholder="리포트 3쪽 상담란에 인쇄됩니다. 비워 두면 손글씨용 빈 줄로 출력됩니다."></textarea>
+          </div>
+          <div class="field">
+            <label for="fCounselor">작성자 <span class="opt">선택</span></label>
+            <input type="text" id="fCounselor" placeholder="예: 진로진학부" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fDate">발행일</label>
+            <input type="date" id="fDate">
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary btn-block" id="btnBuild" type="button">리포트 생성</button>
+            <button class="btn btn-ghost btn-block" id="btnReset" type="button">입력 초기화</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 미리보기 ===== -->
+  <section class="section section-tint" id="preview">
+    <div class="wrap">
+      <div class="sec-head sec-head-row">
+        <div>
+          <p class="eyebrow">STEP 2 · 미리보기</p>
+          <h2>인쇄될 모습 그대로 확인</h2>
+          <p class="lead">브라우저 인쇄 설정에서 배경 그래픽을 켜고 여백을 기본값으로 두세요.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-primary" id="btnPrint" type="button">인쇄 · PDF 저장</button>
+        </div>
+      </div>
+      <div class="preview-stage" id="previewStage">
+        <p class="preview-empty">위에서 정보를 입력하고 <strong>리포트 생성</strong>을 누르면 여기에 표시됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 일괄 출력 ===== -->
+  <section class="section" id="batch">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">STEP 3 · 학급 단위</p>
+        <h2>여러 명을 한 번에 출력</h2>
+        <p class="lead">한 줄에 한 명씩 쉼표로 구분해 붙여 넣으세요. 학생마다 3쪽씩 이어서 인쇄됩니다.</p>
+      </div>
+
+      <div class="card">
+        <p class="csv-help">
+          <code>이름, 학번, 학년, 계열코드, 지역코드, 개설과목수, 중복수, 희망개설률, 공동강좌수, 인프라, 수준코드</code>
+        </p>
+        <ul class="code-legend">
+          <li><b>계열코드</b> ai 공학·AI / sci 자연과학 / med 의약·생명 / econ 경영·경제 / human 인문·어문 / social 사회·정치 / edu 교육·심리</li>
+          <li><b>지역코드</b> big 대도시 / mid 중소도시 / rural 읍면지역</li>
+          <li><b>수준코드</b> low 기초 / mid 보통 / high 심화</li>
+        </ul>
+        <textarea id="batchInput" rows="7" spellcheck="false"
+          placeholder="김○○, 20301, 2, ai, rural, 48, 14, 40, 3, 35, mid&#10;이○○, 20302, 2, med, rural, 48, 14, 65, 3, 35, high"></textarea>
+        <div class="batch-actions">
+          <button class="btn btn-ghost" id="btnSample" type="button">예시 채우기</button>
+          <button class="btn btn-primary" id="btnBatch" type="button">일괄 생성</button>
+          <button class="btn btn-ghost" id="btnBatchPrint" type="button">전체 인쇄</button>
+          <span class="batch-status" id="batchStatus" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div class="preview-stage" id="batchStage"></div>
+    </div>
+  </section>
+
+  <!-- ===== 안내 ===== -->
+  <section class="section section-tint" id="guide">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">활용 안내</p>
+        <h2>리포트는 이렇게 구성됩니다</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <h3 class="mini">1쪽 · 여건 진단</h3>
+          <p>5축 레이더 그래프와 축별 점수표, 전국 기준선 대비 위치, 종합 진단 문장이 들어갑니다. 학생이 자기 상황을 한눈에 파악하는 면입니다.</p>
+        </article>
+        <article class="card">
+          <h3 class="mini">2쪽 · 과목 설계</h3>
+          <p>교내 이수 권장 과목과 공동교육과정 탐색 권장 과목을 표로 분리하고, 학년별 실행 순서와 예상 누적 학점을 제시합니다.</p>
+        </article>
+        <article class="card">
+          <h3 class="mini">3쪽 · 개인 조언</h3>
+          <p>취약 축에 대응하는 구체적 행동 지침, 확인 체크리스트, 상담 기록란과 서명란이 배치됩니다.</p>
+        </article>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3 class="mini">기준값 출처</h3>
+          <p>지역 규모별 기준값은 고교학점제 전면 적용 첫해 전국 17개 시도에서 4개교씩 표집한 68개교 조사 결과입니다. 전수 조사가 아니므로 절대 평가가 아닌 상대적 참고 지표로 읽어야 합니다.</p>
+        </article>
+        <article class="card">
+          <h3 class="mini">개인정보 처리</h3>
+          <p>모든 계산은 브라우저에서만 이뤄지고 서버로 전송되지 않습니다. 다만 이름과 학번을 입력해 출력한 인쇄물은 개인정보가 담긴 문서이므로 배부와 폐기에 주의하세요.</p>
+        </article>
+      </div>
+    <div class="callout">
+    <strong>인쇄 팁</strong>
+    Chrome 기준 인쇄 대화상자에서 <b>용지 A4</b>, <b>여백 기본값</b>, <b>배경 그래픽 켜기</b>를 선택하세요.
+    머리글·바닥글은 끄는 편이 서식이 깔끔합니다. PDF로 저장하면 그대로 배포할 수 있습니다.
+  </div>
+    </div>
+
+
+
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap foot">
+      <div>
+        <p class="brand-text">과목나침반  |  Subject Compass</p>
+        <p class="fine">Made by lovyestar</p>
+        <p class="fine">개인별 과목 선택 진단 리포트 생성기</p>
+      </div>
+      <p class="fine">공개 교육 데이터 기반 · 진단 결과는 참고 자료이며 공식 수강신청을 대체하지 않습니다.</p>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ===== 인쇄 대상 컨테이너 ===== -->
+<div id="printRoot" class="print-root" aria-hidden="true"></div>
+
+<script src="data.js"></script>
+<script src="report.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
