@@ -345,53 +345,51 @@ loadSchool();
   /* =======================================================
      5. NEIS 조회
      ======================================================= */
-  async function lookup() {
-    const name = val('fSchoolName', '').trim();
-    if (!name) { say('lookupState', '학교명을 입력해 주세요.', 'err'); return; }
-    if (typeof window.Neis === 'undefined' || !window.Neis.fetchOffered) {
-      say('lookupState', 'neis.js가 로드되지 않았습니다. 개설 과목을 직접 입력해 주세요.', 'err');
-      return;
-    }
-
-    const cfg = { key: val('fKey', '').trim(), proxy: val('fProxy', '').trim().replace(/\/+$/, '') };
-    const btn = $('btnLookup');
-    fSchoolName.addEventListener('blur', function () {
-    var v = fSchoolName.value.trim();
-    if (!v) return;
-    if (!PICKED_SCHOOL || PICKED_SCHOOL.name !== v) {
-      saveSchool({ schoolName: v });
-      renderSoon();
+     async function lookup() {
+     const name = val('fSchoolName', '').trim();
+     if (!name) { say('lookupState', '학교명을 입력해 주세요.', 'err'); return; }
+   
+     if (typeof window.Neis === 'undefined' || !window.Neis.fetchOffered) {
+       say('lookupState', 'neis.js가 로드되지 않았습니다. 개설 과목을 직접 입력해 주세요.', 'err');
+       return;
+     }
+   
+     const cfg = {
+       key:   val('fKey', '').trim(),
+       proxy: val('fProxy', '').trim().replace(/\/+$/, '')
+     };
+     const btn = $('btnLookup');
+     if (btn) btn.disabled = true;
+     say('lookupState', '조회 중입니다…', 'busy');
+   
+     try {
+       const res = await window.Neis.fetchOffered(name, cfg);
+   
+       if (!res || !res.subjects || !res.subjects.length) {
+         say('lookupState', '개설 과목을 찾지 못했습니다. 직접 입력해 주세요.', 'err');
+         return;
        }
-     });
-    if (btn) btn.disabled = true;
-    say('lookupState', '조회 중입니다…', 'busy');
-    var result = await Neis.fetchOffered(name, cfg);
-    saveSchool(result.school);          // ← 추가
-    fOffered.value = result.subjects.join(', ');
-    if (fSchoolType) fSchoolType.value = result.schoolType;
-    renderSoon();                            // ← 미리보기 갱신
-
-    try {
-      const res = await window.Neis.fetchOffered(name, cfg);
-      if (!res || !res.subjects || !res.subjects.length) {
-        say('lookupState', '개설 과목을 찾지 못했습니다. 직접 입력해 주세요.', 'err');
-        return;
-      }
-      setVal('fOffered', res.subjects.join(', '));
-      if (res.schoolType && $('fSchoolType') && SCHOOL_TYPES[res.schoolType]) {
-        setVal('fSchoolType', res.schoolType);
-      }
-      window.__autoLoaded = true;
-      say('lookupState', `${res.schoolName || name} · ${res.subjects.length}과목을 불러왔습니다.`, 'ok');
-      renderSoon();
-    } catch (err) {
-      const code = (err && err.code) ? ` (${err.code})` : '';
-      say('lookupState', `조회에 실패했습니다.${code} 개설 과목을 직접 입력해 주세요.`, 'err');
-      console.error('[neis]', err);
-    } finally {
-      if (btn) btn.disabled = false;
-    }
-  }
+   
+       saveSchool(res.school);
+       setVal('fOffered', res.subjects.join(', '));
+   
+       if (res.schoolType && $('fSchoolType') && SCHOOL_TYPES[res.schoolType]) {
+         setVal('fSchoolType', res.schoolType);
+       }
+   
+       window.__autoLoaded = true;
+       say('lookupState', `${res.schoolName || name} · ${res.subjects.length}과목을 불러왔습니다.`, 'ok');
+       renderSoon();
+   
+     } catch (err) {
+       if (err && err.code === 'CANCELLED') { say('lookupState', ''); return; }
+       const code = (err && err.code) ? ` (${err.code})` : '';
+       say('lookupState', `조회에 실패했습니다.${code} 개설 과목을 직접 입력해 주세요.`, 'err');
+       console.error('[neis]', err);
+     } finally {
+       if (btn) btn.disabled = false;
+     }
+   }
 
   /* =======================================================
      6. 코드 해석
